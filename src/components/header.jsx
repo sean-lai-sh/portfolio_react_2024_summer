@@ -5,6 +5,7 @@ import Button from "./button";
 import MenuSvg from "../assets/svg/MenuSvg";
 import { HamburgerMenu } from "./design/Header";
 import { useState } from "react";
+import { disablePageScroll, enablePageScroll } from "scroll-lock";
 // Reusable component to have consistent header across the website
 // Will simplify NextJS migration in the future
 const header = () => {
@@ -15,25 +16,33 @@ const header = () => {
   const toggleNavigation = () => {
     if (openNavigation) {
       setOpenNavigation(false);
+      enablePageScroll();
     } else {
       setOpenNavigation(true);
+      disablePageScroll();
     }
   };
 
   const handleClick = () => {
+    if (!openNavigation) return;
+    enablePageScroll();
     setOpenNavigation(false);
   };
 
   return (
     // Make our header stick and span the entire website
     <div
-      className={`top-0 left-0 w-full fixed z-50 bg-n-8/90 backdrop-blur-sm border-n-6 lg:bg-n-8/90 lg:backdrop-blur-sm ${
+      className={`top-0 left-0 w-full border-b fixed z-50 border-n-6 lg:bg-n-8/90 lg:backdrop-blur-sm ${
         openNavigation ? "bg-n-8" : "bg-n-8/90 backdrop-blur-sm"
       }`}
     >
       {/* Flex container to center the content allowing us to place each item with appropriate spacing */}
       <div className={`flex items-center px-5 lg:px-7.5 xl:px-10 max-lg:py-4`}>
-        <a className="block w-[12rem] xl:mr-8" href="#hero">
+        <a
+          className="block w-[12rem] xl:mr-8"
+          href="#hero"
+          onClick={handleClick}
+        >
           <img src={brainwave} width={190} height={40} alt="Brainwave" />
         </a>
         <nav
@@ -46,6 +55,7 @@ const header = () => {
               <a
                 key={item.id}
                 href={`#${item.title}`}
+                onClick={handleClick}
                 className={`block relative font-code text-2xl uppercase text-n-1 transition-colors hover:text-color-1
                     ${
                       item.onlyMobile ? "lg:hidden" : ""
